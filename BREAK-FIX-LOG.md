@@ -6,3 +6,5 @@ One entry per injected failure. Fill in after you diagnose it yourself.
 |---|---|---|---|---|---|---|---|
 | 1 | 1 | Conflicting PRs | | | | | |
 | 1b | 1 | Direct push to `main` | | | | | |
+
+EOF
