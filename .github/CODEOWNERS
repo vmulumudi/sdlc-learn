@@ -1,0 +1,10 @@
+# Path -> owners. Last matching pattern wins.
+# Owners are auto-requested as reviewers; they become *required* only if the
+# ruleset enables "require review from code owners" (off in this solo repo).
+*                       @vmulumudi
+
+# Changes to how code is built, shipped and protected need the platform owner.
+/.github/workflows/     @vmulumudi
+/.github/rulesets/      @vmulumudi
+/.github/CODEOWNERS     @vmulumudi
+/infra/                 @vmulumudi

