@@ -34,3 +34,14 @@ git push --force-with-lease           # safe force push after rebase
 ### Gotchas
 - Windows CRLF: `.gitattributes` forces LF so shell scripts work inside Linux containers.
 - `--force-with-lease` refuses to overwrite remote commits you have not seen; plain `--force` does not.
+- To see what *actually* applies to a branch (all rulesets combined), use
+  `gh api repos/<owner>/<repo>/rules/branches/main` — not just the rulesets list.
+- The first push to a new repo bypasses PR rules only because the ruleset doesn't exist yet
+  ("bootstrapping"). After that, every change goes through a PR.
+- Commit author email is public in a public repo. Use the GitHub noreply address
+  (`<id>+<login>@users.noreply.github.com`) via `git config user.email`.
+
+### Repo facts
+- Repo: https://github.com/vmulumudi/sdlc-learn (public)
+- Ruleset: `main-protection` (definition in `.github/rulesets/main.json`)
+- Merge strategy: squash only; branches auto-delete on merge
