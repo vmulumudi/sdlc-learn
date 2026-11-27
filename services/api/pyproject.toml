@@ -1,0 +1,29 @@
+[project]
+name = "sdlc-learn-api"
+version = "0.1.0"
+description = "Notes API with pgvector semantic search"
+requires-python = "==3.12.*"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "sqlalchemy[asyncio]>=2.0.36",
+  "asyncpg>=0.30",
+  "pgvector>=0.3.6",
+  "alembic>=1.14",
+  "pydantic-settings>=2.6",
+  "redis>=5.2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "pytest-asyncio>=0.24", "httpx>=0.28", "ruff>=0.8"]
+
+[tool.uv]
+# This is an app, not a library: uv only installs dependencies, never the project itself.
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ASYNC"]

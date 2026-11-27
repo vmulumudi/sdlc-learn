@@ -1,0 +1,49 @@
+# Local stack. `docker compose up --build` then open http://localhost:8000/docs
+# Passwords here are for the throwaway local DB only; Azure gets its secrets from Key Vault.
+name: sdlc-learn
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16   # Postgres 16 with the vector extension preinstalled
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app-local-only
+      POSTGRES_DB: sdlc
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d sdlc"]
+      interval: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+
+  # One-shot container: applies migrations, then exits. Mirrors the ACA Job we run in CD
+  # before switching traffic to a new API revision.
+  migrate:
+    build: services/api
+    command: ["alembic", "upgrade", "head"]
+    environment: &api-env
+      DATABASE_URL: postgresql+asyncpg://app:app-local-only@postgres:5432/sdlc
+      REDIS_URL: redis://redis:6379/0
+      APP_VERSION: local
+      GIT_SHA: local
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    build: services/api
+    environment: *api-env
+    ports: ["8000:8000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+volumes:
+  pgdata:
