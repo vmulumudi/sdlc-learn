@@ -1,4 +1,4 @@
-# LEARNING Bravo
+# LEARNING
 
 ## Phase 1 — GitHub workflow
 
