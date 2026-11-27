@@ -1,0 +1,9 @@
+# Normalise line endings in the repo to LF. Linux containers choke on CRLF
+# (e.g. "/bin/sh^M: bad interpreter" in entrypoint scripts).
+* text=auto eol=lf
+# PowerShell scripts are run on Windows; keep CRLF for them.
+*.ps1 text eol=crlf
+# Binary files: never touch.
+*.png binary
+*.jpg binary
+*.ico binary
