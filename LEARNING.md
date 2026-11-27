@@ -1,4 +1,4 @@
-# LEARNING
+# LEARNING Alpha
 
 ## Phase 1 — GitHub workflow
 
