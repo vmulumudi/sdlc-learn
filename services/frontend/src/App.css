@@ -1,0 +1,4 @@
+.notes { max-width: 640px; margin: 2rem auto; padding: 0 1rem; text-align: left; }
+.notes form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.notes input { flex: 1; padding: 0.4rem; }
+.error { color: crimson; }
