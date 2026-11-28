@@ -45,5 +45,12 @@ services:
       migrate: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
 
+  # nginx serves the built React app on :8080 and forwards /api to the api service.
+  frontend:
+    build: services/frontend
+    ports: ["8080:8080"]
+    depends_on:
+      api: { condition: service_started }
+
 volumes:
   pgdata:
